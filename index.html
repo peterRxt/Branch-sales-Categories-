@@ -1,213 +1,713 @@
+Here is an HTML document that groups branch sales by location name (e.g., "Ruiru") and provides fully functional export with branch-level summation.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📊 WELCOME PETER!!</title>
-  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #1e88e5;
-      --primary-dark: #1565c0;
-      --accent: #ff6b6b;
-      --bg: #f5f8fa;
-      --text: #333;
-      --light-text: #666;
-      --radius: 12px;
-      --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    body {
-      font-family: 'Roboto', sans-serif;
-      background: url('cover.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      position: relative;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    body.dark-mode {
-      background: #121212;
-      color: #ddd;
-    }
-
-    body.dark-mode .tool-card {
-      background: #1f1f1f;
-      color: #eee;
-    }
-
-    header {
-      background: linear-gradient(120deg, var(--primary), #0d47a1);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      position: relative;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .toggle-dark {
-      background: transparent;
-      border: 2px solid white;
-      color: white;
-      border-radius: 8px;
-      padding: 4px 10px;
-      cursor: pointer;
-    }
-
-    .search-box {
-      margin: 1rem auto;
-      max-width: 300px;
-      text-align: center;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 0.6rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: var(--radius);
-    }
-
-    .hero {
-      text-align: center;
-      margin: 2rem auto;
-    }
-
-    .section-title {
-      font-size: 1.2rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      color: var(--primary);
-      border-bottom: 2px solid var(--primary-dark);
-      display: inline-block;
-      padding-bottom: 0.2rem;
-    }
-
-    .tools-group {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.2rem;
-      padding: 0 1.2rem;
-    }
-
-    a.tool-card {
-      background: white;
-      border-radius: var(--radius);
-      padding: 1rem;
-      box-shadow: var(--shadow);
-      text-align: center;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border: 1px solid #e0e0e0;
-    }
-
-    a.tool-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-      background: #f9fafe;
-    }
-
-    .tool-icon {
-      background: rgba(30, 136, 229, 0.1);
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      margin: 0 auto 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      font-size: 1.8rem;
-    }
-
-    .tool-title {
-      font-weight: 600;
-      font-size: 1rem;
-    }
-
-    footer {
-      background: white;
-      text-align: center;
-      padding: 1rem;
-      font-size: 0.9rem;
-      color: var(--light-text);
-      margin-top: 3rem;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Branch Sales Aggregator | Smart Branch Grouping by Location Keyword</title>
+    <!-- Bootstrap 5 + Icons + Fonts -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- SheetJS (XLSX) core for large Excel files -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(145deg, #f4f7fc 0%, #e9eef3 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        .card-glass {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(2px);
+            border: none;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+        }
+        .card-header-custom {
+            background: transparent;
+            border-bottom: 2px solid #dee2e6;
+            padding: 1.2rem 1.8rem;
+            font-weight: 700;
+            font-size: 1.35rem;
+        }
+        .btn-rounded {
+            border-radius: 60px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: #1a4d8c;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #0f3b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+        }
+        .upload-area {
+            border: 2px dashed #adc5d4;
+            border-radius: 28px;
+            background: #fefefe;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            background: #f1f9ff;
+            border-color: #2c7da0;
+        }
+        .badge-ipg {
+            background: #e9ecef;
+            color: #1a4d8c;
+            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            margin: 4px 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .badge-ipg.active {
+            background: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 8px rgba(13,110,253,0.3);
+            border-color: #0d6efd;
+        }
+        .badge-ipg:hover:not(.active) {
+            background: #d4e0f0;
+            transform: scale(1.02);
+        }
+        .filter-group {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #ffffffd9;
+            border-radius: 24px;
+            padding: 12px;
+        }
+        .branch-filter-group {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 24px;
+            padding: 12px;
+            margin-bottom: 1rem;
+        }
+        .badge-branch {
+            background: #e2eaf1;
+            color: #0a3a5e;
+            font-size: 0.8rem;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-weight: 500;
+            margin: 4px 6px;
+            cursor: pointer;
+            border: 1px solid #cddfe8;
+        }
+        .badge-branch.active {
+            background: #198754;
+            color: white;
+            border-color: #198754;
+            box-shadow: 0 2px 6px rgba(25,135,84,0.3);
+        }
+        .summary-card {
+            background: #ffffffcc;
+            border-radius: 24px;
+            padding: 1rem;
+        }
+        .table-responsive-custom {
+            max-height: 420px;
+            overflow-y: auto;
+            border-radius: 20px;
+        }
+        .spinner-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1090;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+        .processing-text {
+            background: white;
+            padding: 20px 32px;
+            border-radius: 80px;
+            font-weight: 600;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .branch-badge-info {
+            background: #eef2f5;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-weight: 600;
+        }
+        .rule-hint {
+            font-size: 0.7rem;
+            background: #fef7e0;
+            border-left: 3px solid #ffc107;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="top-bar">
-      <h1 id="greeting">Welcome!</h1>
-      <button class="toggle-dark" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+<div class="spinner-overlay" id="loadingOverlay">
+    <div class="processing-text bg-white shadow-lg">
+        <i class="bi bi-arrow-repeat spin me-2" style="animation: spin 1s linear infinite;"></i> Processing large files & aggregating smart branches...
     </div>
-  </header>
-
-  <div class="search-box">
-    <input type="text" id="searchInput" onkeyup="filterTools()" placeholder="Search tools...">
-  </div>
-
-  <section class="container">
-    <h2 class="section-title">Forebet Tools</h2>
-    <div class="tools-group" id="toolList">
-      <a href="FOREBET.html" class="tool-card"><div class="tool-icon"><i class="fas fa-star"></i></div><div class="tool-title">FOOTYSTATS HOME WINS</div></a>
-      <a href="3way Forebet.html" class="tool-card"><div class="tool-icon"><i class="fas fa-filter"></i></div><div class="tool-title">ZULUBET</div></a>
-      <a href="forebetfootball.html" class="tool-card"><div class="tool-icon"><i class="fas fa-chart-bar"></i></div><div class="tool-title">FOOTY COMBO</div></a>
-      <a href="footystats football filter.html" class="tool-card"><div class="tool-icon"><i class="fas fa-trophy"></i></div><div class="tool-title">FOOTYSTATS ORIGINAL </div></a>
-      <a href="footystatstenis.html" class="tool-card"><div class="tool-icon"><i class="fas fa-baseball-ball"></i></div><div class="tool-title">FOOTYSTATS TENNIS</div></a>
-      <a href="counterbet.html" class="tool-card"><div class="tool-icon"><i class="fas fa-calculator"></i></div><div class="tool-title">HEDGING CALCULATOR</div></a>
-      <a href="multibet-calculator.html" class="tool-card"><div class="tool-icon"><i class="fas fa-cube"></i></div><div class="tool-title">STAKE CALCULATOR</div></a>
-      <a href="multibetgenerator.html" class="tool-card"><div class="tool-icon"><i class="fas fa-cubes"></i></div><div class="tool-title">MULTIBET GENERATOR</div></a>
+</div>
+<div class="container py-4 py-md-5">
+    <div class="text-center mb-4">
+        <h1 class="display-6 fw-bold" style="color: #1e4663;"><i class="bi bi-diagram-3 me-2"></i>Smart Branch Sales Aggregator</h1>
+        <p class="lead text-secondary">Groups service points by location keyword (e.g., "Ruiru" from "Ruiru Retail", "Ruiru Liquor") → Filter by Inventory Group + Branch → Export with branch totals</p>
     </div>
-  </section>
+    <div class="row g-4">
+        <!-- Upload panel -->
+        <div class="col-lg-5">
+            <div class="card-glass card h-100">
+                <div class="card-header-custom">
+                    <i class="bi bi-upload me-2"></i> Data Import
+                </div>
+                <div class="card-body p-4">
+                    <label class="fw-semibold mb-1"><i class="bi bi-cart-check"></i> POS Sales File (Excel/CSV)</label>
+                    <div class="upload-area p-3 mb-3 text-center" id="salesDropZone">
+                        <i class="bi bi-file-excel fs-2 text-success"></i>
+                        <p class="mb-1 mt-2">Drag & drop or click</p>
+                        <small class="text-muted">Required: product, qty, amount, <strong>service_point</strong> (e.g., "Ruiru Retail", "Ruiru Liquor")</small>
+                        <input type="file" id="salesFileInput" accept=".xlsx, .xls, .csv, .xlsm" class="d-none">
+                    </div>
+                    <div id="salesFileName" class="small text-secondary mb-3"></div>
+                    <div class="alert alert-warning rule-hint small p-2 mb-3">
+                        <i class="bi bi-lightbulb"></i> <strong>Smart Branch Logic:</strong> Extracts first word (or keyword) from service_point. Example: "Ruiru Retail" → Branch: "Ruiru". All Ruiru-based outlets aggregated together.
+                    </div>
+                    <label class="fw-semibold mb-1"><i class="bi bi-diagram-3"></i> BC Mapping File (Excel/CSV)</label>
+                    <div class="upload-area p-3 mb-3 text-center" id="bcDropZone">
+                        <i class="bi bi-file-spreadsheet fs-2 text-primary"></i>
+                        <p class="mb-1 mt-2">Drag & drop or click</p>
+                        <small class="text-muted">Must contain: "Description" & "Inventory Posting Group"</small>
+                        <input type="file" id="bcFileInput" accept=".xlsx, .xls, .csv, .xlsm" class="d-none">
+                    </div>
+                    <div id="bcFileName" class="small text-secondary mb-3"></div>
 
-  <footer>
-    <p>Made by Peter<p/>
-  </footer>
+                    <button class="btn btn-primary w-100 btn-rounded mt-2" id="processBtn" disabled>
+                        <i class="bi bi-link-45deg"></i> Link & Process Data (Smart Branch Agg)
+                    </button>
+                </div>
+            </div>
+        </div>
 
-  <script>
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
+        <!-- filters panel -->
+        <div class="col-lg-7">
+            <div class="card-glass card h-100">
+                <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap">
+                    <span><i class="bi bi-tags"></i> Filters: IPG & Smart Branch</span>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill" id="showAllGroupsBtn"><i class="bi bi-list-ul"></i> All IPG</button>
+                </div>
+                <div class="card-body p-3">
+                    <!-- Branch Filter Section (Smart Branches) -->
+                    <label class="fw-semibold mb-1"><i class="bi bi-building"></i> Aggregated Branches (by location keyword)</label>
+                    <div class="branch-filter-group mb-3" id="branchContainer">
+                        <div class="text-muted text-center py-2">⏳ Upload sales file to detect aggregated branches</div>
+                    </div>
+
+                    <!-- Inventory Group Filter -->
+                    <label class="fw-semibold mb-1 mt-2"><i class="bi bi-tag"></i> Inventory Posting Groups</label>
+                    <div class="filter-group mb-2" id="inventoryGroupsContainer">
+                        <div class="text-muted text-center py-2">⬆️ Upload BC file to load groups</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mt-2">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="selectAllToggle">
+                            <label class="form-check-label fw-semibold" for="selectAllToggle">Select all IPG groups</label>
+                        </div>
+                        <button class="btn btn-sm btn-outline-success rounded-pill" id="selectAllBranchesBtn"><i class="bi bi-house-check"></i> All Smart Branches</button>
+                    </div>
+
+                    <hr class="my-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <div class="summary-card">
+                                <i class="bi bi-bar-chart-steps"></i> <strong>Aggregated Results</strong><br>
+                                <span id="aggregatedStats">No data yet</span>
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                            <button class="btn btn-success btn-rounded" id="exportBtn" disabled>
+                                <i class="bi bi-download"></i> Export to Excel (with branch sums)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card-glass">
+                <div class="card-header-custom">
+                    <i class="bi bi-table"></i> Filtered Sales Summary (Product + Smart Branch)
+                    <span id="resultCountBadge" class="badge bg-secondary ms-2">0 rows</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive-custom">
+                        <table class="table table-hover align-middle mb-0" id="resultTable">
+                            <thead class="table-light sticky-top">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product Description</th>
+                                    <th>Smart Branch (Location)</th>
+                                    <th class="text-end">Total Qty</th>
+                                    <th class="text-end">Total Sales Amount</th>
+                                    <th>Inventory Posting Group</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultTableBody">
+                                <tr><td colspan="6" class="text-center text-muted py-4">Upload & process to see branch-aggregated sales</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ----- DATA STORES -----
+    let salesDataRaw = [];
+    let bcDataRaw = [];
+    let productToInvGroup = new Map();     // product description -> Inventory Posting Group
+    let uniqueInventoryGroups = new Set();
+    
+    // Smart branch mapping: original service_point -> aggregated branch name (e.g., "Ruiru")
+    let originalToSmartBranch = new Map(); 
+    let uniqueSmartBranches = new Set();    // aggregated branch keys (e.g., "Ruiru", "Nairobi")
+    
+    let enrichedSales = [];   // each: { productDesc, qty, amount, inventoryGroup, smartBranch }
+    let currentFilteredAggregation = [];   // aggregated by productDesc + smartBranch
+    
+    // UI Filter state
+    let currentSelectedGroups = new Set();
+    let currentSelectedSmartBranches = new Set();
+    
+    // DOM elements
+    const salesInput = document.getElementById('salesFileInput');
+    const bcInput = document.getElementById('bcFileInput');
+    const salesDropZone = document.getElementById('salesDropZone');
+    const bcDropZone = document.getElementById('bcDropZone');
+    const salesFileNameSpan = document.getElementById('salesFileName');
+    const bcFileNameSpan = document.getElementById('bcFileName');
+    const processBtn = document.getElementById('processBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const inventoryGroupsContainer = document.getElementById('inventoryGroupsContainer');
+    const branchContainer = document.getElementById('branchContainer');
+    const selectAllToggle = document.getElementById('selectAllToggle');
+    const selectAllBranchesBtn = document.getElementById('selectAllBranchesBtn');
+    const resultTableBody = document.getElementById('resultTableBody');
+    const aggregatedStatsSpan = document.getElementById('aggregatedStats');
+    const resultCountBadge = document.getElementById('resultCountBadge');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const showAllGroupsBtn = document.getElementById('showAllGroupsBtn');
+
+    // Helper: show/hide loader
+    function showLoader() { loadingOverlay.style.display = 'flex'; }
+    function hideLoader() { loadingOverlay.style.display = 'none'; }
+
+    // Read Excel/CSV via SheetJS
+    function readExcelFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array', cellDates: false, defval: "" });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+                resolve(rows);
+            };
+            reader.onerror = (err) => reject(err);
+            reader.readAsArrayBuffer(file);
+        });
     }
 
-    function updateGreeting() {
-      const hour = new Date().getHours();
-      const greeting = document.getElementById('greeting');
-      if (hour < 12) greeting.textContent = 'Good Morning, Peter!';
-      else if (hour < 18) greeting.textContent = 'Good Afternoon, Peter!';
-      else greeting.textContent = 'Good Evening, Peter!';
+    // Drag & drop setup
+    function setupDragAndDrop(zone, fileInput, fileNameSpan) {
+        zone.addEventListener('click', () => fileInput.click());
+        zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.style.borderColor = '#0d6efd'; });
+        zone.addEventListener('dragleave', () => zone.style.borderColor = '#adc5d4');
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zone.style.borderColor = '#adc5d4';
+            const file = e.dataTransfer.files[0];
+            if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv') || file.name.endsWith('.xlsm'))) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                fileInput.files = dt.files;
+                fileNameSpan.innerText = `📎 ${file.name}`;
+                checkBothFilesReady();
+            } else alert("Please upload valid Excel/CSV file");
+        });
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) fileNameSpan.innerText = `📎 ${fileInput.files[0].name}`;
+            else fileNameSpan.innerText = '';
+            checkBothFilesReady();
+        });
     }
 
-    function filterTools() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const cards = document.querySelectorAll('#toolList .tool-card');
-      cards.forEach(card => {
-        const text = card.textContent.toLowerCase();
-        const match = fuzzyMatch(input, text);
-        card.style.display = match ? '' : 'none';
-      });
+    function checkBothFilesReady() {
+        if (salesInput.files.length && bcInput.files.length) processBtn.disabled = false;
+        else processBtn.disabled = true;
     }
 
-    function fuzzyMatch(input, text) {
-      const pattern = input.split('').join('.*');
-      return new RegExp(pattern).test(text);
+    // ---- Core: Extract smart branch from service_point (first word / location keyword) ----
+    function extractSmartBranch(servicePointRaw) {
+        if (!servicePointRaw || servicePointRaw.toString().trim() === "") return "Unknown Branch";
+        let raw = servicePointRaw.toString().trim();
+        // Split by spaces and take first token as location keyword (e.g., "Ruiru" from "Ruiru Retail" or "Ruiru Liquor")
+        // Edge: if name has multiple words like "Westlands Mall" -> we take first word "Westlands"
+        let firstWord = raw.split(/\s+/)[0];
+        // Handle special cases: if first word is very short like "El" but overall it's "Eldoret" - we can also use full first token.
+        // For more accuracy keep first word as branch base.
+        if (firstWord.length > 0) {
+            return firstWord.charAt(0).toUpperCase() + firstWord.slice(1);
+        }
+        return raw;
     }
 
-    updateGreeting();
-  </script>
+    // Process files and build smart branch mapping
+    async function processData() {
+        if (!salesInput.files.length || !bcInput.files.length) {
+            alert("Please select both Sales and BC files.");
+            return;
+        }
+        showLoader();
+        try {
+            const salesFile = salesInput.files[0];
+            const bcFile = bcInput.files[0];
+            const [salesRows, bcRows] = await Promise.all([readExcelFile(salesFile), readExcelFile(bcFile)]);
+            if (!salesRows.length || !bcRows.length) throw new Error("Files empty or invalid format");
+            salesDataRaw = salesRows;
+            bcDataRaw = bcRows;
+
+            // Build BC product mapping
+            productToInvGroup.clear();
+            uniqueInventoryGroups.clear();
+            for (const bcRow of bcRows) {
+                let descRaw = bcRow['Description'] || bcRow['description'] || '';
+                let invGroup = bcRow['Inventory Posting Group'] || bcRow['Inventory Posting Group1'] || bcRow['inventory posting group'] || '';
+                if (descRaw.toString().trim() !== "") {
+                    const key = descRaw.toString().trim();
+                    const groupVal = invGroup.toString().trim() || "Unassigned";
+                    productToInvGroup.set(key, groupVal);
+                    uniqueInventoryGroups.add(groupVal);
+                }
+            }
+            if (uniqueInventoryGroups.size === 0) uniqueInventoryGroups.add("All Items");
+
+            // Process sales: extract smart branch from service_point column
+            originalToSmartBranch.clear();
+            uniqueSmartBranches.clear();
+            enrichedSales = [];
+            
+            for (const sale of salesDataRaw) {
+                let productNameRaw = sale['product'] || sale['Product'] || '';
+                if (!productNameRaw.toString().trim()) continue;
+                const prodKey = productNameRaw.toString().trim();
+                let inventoryGroup = productToInvGroup.get(prodKey) || "⚠ Not Mapped";
+                
+                let qty = parseFloat(sale['qty'] || sale['Qty'] || sale['quantity'] || 0);
+                let amount = parseFloat(sale['amount'] || sale['Amount'] || sale['total'] || 0);
+                if (isNaN(qty)) qty = 0;
+                if (isNaN(amount)) amount = 0;
+                
+                // Branch extraction: column "service_point"
+                let servicePointRaw = sale['service_point'] || sale['Service_Point'] || sale['service point'] || sale['branch'] || '';
+                let smartBranch = extractSmartBranch(servicePointRaw);
+                
+                // Store mapping for reference (optional)
+                if (servicePointRaw && servicePointRaw.toString().trim() !== "") {
+                    originalToSmartBranch.set(servicePointRaw.toString().trim(), smartBranch);
+                }
+                uniqueSmartBranches.add(smartBranch);
+                
+                enrichedSales.push({
+                    productDesc: prodKey,
+                    qty: qty,
+                    amount: amount,
+                    inventoryGroup: inventoryGroup,
+                    smartBranch: smartBranch
+                });
+            }
+            
+            if (enrichedSales.length === 0) throw new Error("No valid sales rows. Ensure columns: 'product', 'qty', 'amount', and 'service_point'.");
+            
+            // Render UI components
+            renderSmartBranchChips();
+            renderInventoryGroupChips();
+            
+            // Default selection: all IPG groups and all smart branches
+            currentSelectedGroups.clear();
+            uniqueInventoryGroups.forEach(g => currentSelectedGroups.add(g));
+            currentSelectedSmartBranches.clear();
+            uniqueSmartBranches.forEach(b => currentSelectedSmartBranches.add(b));
+            updateChipsActiveState();
+            updateBranchChipsActiveState();
+            selectAllToggle.checked = true;
+            
+            applyFilterAndAggregate();
+            hideLoader();
+        } catch (err) {
+            hideLoader();
+            console.error(err);
+            alert("Processing error: " + err.message);
+        }
+    }
+
+    // Render smart branch chips (aggregated location)
+    function renderSmartBranchChips() {
+        if (uniqueSmartBranches.size === 0) {
+            branchContainer.innerHTML = '<div class="text-muted text-center">No branches detected after smart aggregation.</div>';
+            return;
+        }
+        let branchesArray = Array.from(uniqueSmartBranches).sort();
+        let html = '<div class="d-flex flex-wrap">';
+        branchesArray.forEach(branch => {
+            html += `<span class="badge-branch" data-branch="${escapeHtml(branch)}">🏪 ${escapeHtml(branch)}</span>`;
+        });
+        html += '</div><small class="text-muted mt-1 d-block"><i class="bi bi-info-circle"></i> Branches are grouped by location keyword (e.g., "Ruiru" from "Ruiru Retail", "Ruiru Liquor")</small>';
+        branchContainer.innerHTML = html;
+        document.querySelectorAll('.badge-branch').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const branchVal = el.getAttribute('data-branch');
+                if (currentSelectedSmartBranches.has(branchVal)) {
+                    currentSelectedSmartBranches.delete(branchVal);
+                    el.classList.remove('active');
+                } else {
+                    currentSelectedSmartBranches.add(branchVal);
+                    el.classList.add('active');
+                }
+                applyFilterAndAggregate();
+            });
+        });
+        updateBranchChipsActiveState();
+    }
+
+    function updateBranchChipsActiveState() {
+        document.querySelectorAll('.badge-branch').forEach(el => {
+            const br = el.getAttribute('data-branch');
+            if (currentSelectedSmartBranches.has(br)) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+    }
+
+    function renderInventoryGroupChips() {
+        if (uniqueInventoryGroups.size === 0) {
+            inventoryGroupsContainer.innerHTML = '<div class="text-muted text-center">No Inventory Posting Groups found.</div>';
+            return;
+        }
+        const groupsArray = Array.from(uniqueInventoryGroups).sort();
+        let html = '<div class="d-flex flex-wrap">';
+        groupsArray.forEach(group => {
+            html += `<span class="badge-ipg" data-group="${escapeHtml(group)}">${escapeHtml(group)}</span>`;
+        });
+        html += '</div>';
+        inventoryGroupsContainer.innerHTML = html;
+        document.querySelectorAll('.badge-ipg').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const group = el.getAttribute('data-group');
+                if (currentSelectedGroups.has(group)) {
+                    currentSelectedGroups.delete(group);
+                    el.classList.remove('active');
+                } else {
+                    currentSelectedGroups.add(group);
+                    el.classList.add('active');
+                }
+                if (currentSelectedGroups.size === uniqueInventoryGroups.size) selectAllToggle.checked = true;
+                else selectAllToggle.checked = false;
+                applyFilterAndAggregate();
+            });
+        });
+        updateChipsActiveState();
+    }
+
+    function updateChipsActiveState() {
+        document.querySelectorAll('.badge-ipg').forEach(el => {
+            const grp = el.getAttribute('data-group');
+            if (currentSelectedGroups.has(grp)) el.classList.add('active');
+            else el.classList.remove('active');
+        });
+    }
+
+    // Apply filters & aggregate by Product + Smart Branch
+    function applyFilterAndAggregate() {
+        let filtered = enrichedSales.filter(sale => 
+            currentSelectedGroups.has(sale.inventoryGroup) && 
+            currentSelectedSmartBranches.has(sale.smartBranch)
+        );
+        
+        const aggMap = new Map(); // key = productDesc|smartBranch
+        for (const sale of filtered) {
+            const key = `${sale.productDesc}||${sale.smartBranch}`;
+            if (!aggMap.has(key)) {
+                aggMap.set(key, {
+                    productDesc: sale.productDesc,
+                    smartBranch: sale.smartBranch,
+                    totalQty: 0,
+                    totalSales: 0,
+                    inventoryGroup: sale.inventoryGroup
+                });
+            }
+            const entry = aggMap.get(key);
+            entry.totalQty += sale.qty;
+            entry.totalSales += sale.amount;
+        }
+        
+        currentFilteredAggregation = Array.from(aggMap.values());
+        currentFilteredAggregation.sort((a,b) => a.productDesc.localeCompare(b.productDesc) || a.smartBranch.localeCompare(b.smartBranch));
+        renderTable();
+        updateSummaryStats();
+        exportBtn.disabled = (currentFilteredAggregation.length === 0);
+        resultCountBadge.innerText = `${currentFilteredAggregation.length} rows`;
+    }
+
+    function renderTable() {
+        if (!currentFilteredAggregation.length) {
+            resultTableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No sales data for selected IPG groups and smart branches</td></tr>';
+            return;
+        }
+        let html = '';
+        currentFilteredAggregation.forEach((item, idx) => {
+            html += `<tr>
+                        <td>${idx+1}</td>
+                        <td><strong>${escapeHtml(item.productDesc)}</strong></td>
+                        <td><span class="branch-badge-info"><i class="bi bi-geo-alt-fill"></i> ${escapeHtml(item.smartBranch)}</span></td>
+                        <td class="text-end">${item.totalQty.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                        <td class="text-end">${item.totalSales.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                        <td><span class="badge bg-info bg-opacity-25 text-dark p-2">${escapeHtml(item.inventoryGroup)}</span></td>
+                      </tr>`;
+        });
+        resultTableBody.innerHTML = html;
+    }
+
+    function updateSummaryStats() {
+        const totalQtySum = currentFilteredAggregation.reduce((acc, i) => acc + i.totalQty, 0);
+        const totalSalesSum = currentFilteredAggregation.reduce((acc, i) => acc + i.totalSales, 0);
+        const groupsCount = currentSelectedGroups.size;
+        const branchesCount = currentSelectedSmartBranches.size;
+        
+        // Calculate per-branch total for quick insight in UI (optional summary)
+        let branchSummaryMap = new Map();
+        for (const row of currentFilteredAggregation) {
+            let branch = row.smartBranch;
+            let salesVal = row.totalSales;
+            branchSummaryMap.set(branch, (branchSummaryMap.get(branch) || 0) + salesVal);
+        }
+        let branchDetails = "";
+        if (branchSummaryMap.size > 0 && branchSummaryMap.size <= 5) {
+            let parts = [];
+            for (let [b, val] of branchSummaryMap.entries()) {
+                parts.push(`${b}: ${val.toLocaleString(undefined, {minimumFractionDigits:2})}`);
+            }
+            branchDetails = ` | Branch sales: ${parts.join(" • ")}`;
+        }
+        
+        aggregatedStatsSpan.innerHTML = `<i class="bi bi-bar-chart-steps"></i> IPG: ${groupsCount} | Branches: ${branchesCount} | Total Qty: ${totalQtySum.toLocaleString(undefined, {minimumFractionDigits:2})} | Total Sales: ${totalSalesSum.toLocaleString(undefined, {minimumFractionDigits:2})}${branchDetails}`;
+    }
+
+    // Export to Excel: includes per-branch summation (two sheets: detailed + branch summary)
+    function exportToExcel() {
+        if (!currentFilteredAggregation.length) {
+            alert("No data to export. Please adjust filters.");
+            return;
+        }
+        
+        // Sheet 1: Detailed product-branch breakdown
+        const detailData = currentFilteredAggregation.map(item => ({
+            "Product Description": item.productDesc,
+            "Smart Branch (Location)": item.smartBranch,
+            "Total Quantity": item.totalQty,
+            "Total Sales Amount": item.totalSales,
+            "Inventory Posting Group": item.inventoryGroup
+        }));
+        
+        // Sheet 2: Branch summary (aggregated sales per smart branch)
+        const branchSalesMap = new Map();
+        for (const item of currentFilteredAggregation) {
+            const branch = item.smartBranch;
+            const current = branchSalesMap.get(branch) || { totalQty: 0, totalSales: 0 };
+            current.totalQty += item.totalQty;
+            current.totalSales += item.totalSales;
+            branchSalesMap.set(branch, current);
+        }
+        const branchSummary = [];
+        for (let [branch, vals] of branchSalesMap.entries()) {
+            branchSummary.push({
+                "Smart Branch": branch,
+                "Total Quantity (Branch)": vals.totalQty,
+                "Total Sales Amount (Branch)": vals.totalSales
+            });
+        }
+        
+        const wb = XLSX.utils.book_new();
+        const detailWs = XLSX.utils.json_to_sheet(detailData);
+        const summaryWs = XLSX.utils.json_to_sheet(branchSummary);
+        XLSX.utils.book_append_sheet(wb, detailWs, "Product_Branch_Details");
+        XLSX.utils.book_append_sheet(wb, summaryWs, "Branch_Total_Sales");
+        
+        XLSX.writeFile(wb, `smart_branch_sales_${new Date().toISOString().slice(0,19)}.xlsx`);
+    }
+
+    // Select all IPG groups
+    function selectAllGroups() {
+        if (uniqueInventoryGroups.size === 0) return;
+        currentSelectedGroups.clear();
+        uniqueInventoryGroups.forEach(g => currentSelectedGroups.add(g));
+        selectAllToggle.checked = true;
+        updateChipsActiveState();
+        applyFilterAndAggregate();
+    }
+    
+    function selectAllSmartBranches() {
+        if (uniqueSmartBranches.size === 0) return;
+        currentSelectedSmartBranches.clear();
+        uniqueSmartBranches.forEach(b => currentSelectedSmartBranches.add(b));
+        updateBranchChipsActiveState();
+        applyFilterAndAggregate();
+    }
+    
+    function onSelectAllToggle(e) {
+        if (e.target.checked) selectAllGroups();
+        else {
+            currentSelectedGroups.clear();
+            selectAllToggle.checked = false;
+            updateChipsActiveState();
+            applyFilterAndAggregate();
+        }
+    }
+
+    function escapeHtml(str) { 
+        return String(str).replace(/[&<>]/g, function(m){
+            if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;
+        });
+    }
+
+    function init() {
+        setupDragAndDrop(salesDropZone, salesInput, salesFileNameSpan);
+        setupDragAndDrop(bcDropZone, bcInput, bcFileNameSpan);
+        processBtn.addEventListener('click', processData);
+        exportBtn.addEventListener('click', exportToExcel);
+        selectAllToggle.addEventListener('change', onSelectAllToggle);
+        showAllGroupsBtn.addEventListener('click', () => { if (uniqueInventoryGroups.size) selectAllGroups(); else alert("Load BC file first."); });
+        selectAllBranchesBtn.addEventListener('click', () => { if (uniqueSmartBranches.size) selectAllSmartBranches(); else alert("Load sales file first to detect smart branches."); });
+    }
+    init();
+</script>
 </body>
 </html>
+```
